@@ -1,0 +1,30 @@
+{
+  "name": "MyFirst_MCPserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "MyFirst_MCPserver": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outdir=build --format=esm && node --eval \"import('fs').then(fs => fs.chmodSync('build/index.js', '755'))\" && copyfiles .env build"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "dotenv": "^16.5.0",
+    "zod": "^3.25.55"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "copyfiles": "^2.4.1",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}
