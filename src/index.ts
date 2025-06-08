@@ -1,15 +1,16 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { weatherService } from './modules/weather';
+import { braveService } from './modules/brave';
+import { googleSearchService } from './modules/googleSearch';
 import { z } from "zod";
-import { weatherService } from 'weather';
-import { braveService } from 'brave';
 import type { 
   AlertsResponse, 
   PointsResponse, 
   ForecastResponse,
   AlertFeature,
   ForecastPeriod
-} from 'types';
+} from 'modules/types';
 
 // Create server instance
 console.info("Creating MCP Server...");
@@ -112,10 +113,10 @@ server.tool(
   }
 );
 
-// Register web-search tool
-console.info("Registering web-search tool...");
+// Register brave-web-search tool
+console.info("Registering brave-web-search tool...");
 server.tool(
-  "web-search",
+  "brave-web-search",
   "Search the web using Brave Search",
   {
     query: z.string().describe("The search query"),
@@ -144,6 +145,41 @@ server.tool(
         {
           type: "text",
           text: `Search results for "${query}":\n\n${formattedResults.join('\n')}`
+        }
+      ]
+    };
+  }
+);
+
+// Register google-search tool
+console.info("Registering google-search tool...");
+server.tool(
+  "google-search",
+  "Search the web using Google Custom Search",
+  {
+    query: z.string().describe("The search query"),
+    count: z.number().min(1).max(10).optional().describe("Number of results to return (max 10)")
+  },
+  async ({ query, count = 5 }) => {
+    const results = await googleSearchService.search(query, count);
+    if (!results.length) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No results found from Google Search."
+          }
+        ]
+      };
+    }
+    const formattedResults = results.map(
+      (r, i) => `${i + 1}. ${r.title}\n${r.link}\n${r.snippet}`
+    );
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Google Search results for "${query}":\n\n${formattedResults.join('\n\n')}`
         }
       ]
     };

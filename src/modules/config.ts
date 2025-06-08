@@ -49,6 +49,8 @@ export interface Config {
   BRAVE_BASE_URL: string;
   WEATHER_USER_AGENT: string;
   WEATHER_API_BASE: string;
+  GOOGLE_API_KEY: string;
+  GOOGLE_CSE_ID: string;
 }
 
 class ConfigImpl implements Config {
@@ -56,18 +58,24 @@ class ConfigImpl implements Config {
   readonly BRAVE_BASE_URL: string;
   readonly WEATHER_USER_AGENT: string;
   readonly WEATHER_API_BASE: string;
+  readonly GOOGLE_API_KEY: string;
+  readonly GOOGLE_CSE_ID: string;
 
   constructor() {
     this.BRAVE_API_KEY = process.env.BRAVE_API_KEY || '';
     this.BRAVE_BASE_URL = process.env.BRAVE_BASE_URL || 'https://api.search.brave.com/res/v1';
     this.WEATHER_USER_AGENT = process.env.WEATHER_USER_AGENT || 'WeatherApp/1.0';
     this.WEATHER_API_BASE = process.env.WEATHER_API_BASE || 'https://api.weather.gov';
+    this.GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
+    this.GOOGLE_CSE_ID = process.env.GOOGLE_CSE_ID || '';
 
     console.log('Config values:', {
       BRAVE_API_KEY: this.BRAVE_API_KEY ? '***' : 'not set',
       BRAVE_BASE_URL: this.BRAVE_BASE_URL,
       WEATHER_USER_AGENT: this.WEATHER_USER_AGENT,
-      WEATHER_API_BASE: this.WEATHER_API_BASE
+      WEATHER_API_BASE: this.WEATHER_API_BASE,
+      GOOGLE_API_KEY: this.GOOGLE_API_KEY ? '***' : 'not set',
+      GOOGLE_CSE_ID: this.GOOGLE_CSE_ID ? '***' : 'not set'
     });
 
     if (!this.BRAVE_API_KEY) {
@@ -77,4 +85,4 @@ class ConfigImpl implements Config {
 }
 
 const config: Config = new ConfigImpl();
-export default config; 
+export default config;

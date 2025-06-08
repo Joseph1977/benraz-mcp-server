@@ -38,3 +38,10 @@ export interface SearchResult {
   url: string;
   description?: string;
 } 
+
+
+export interface GoogleSearchResult {
+  title: string;
+  link: string;
+  snippet: string;
+}

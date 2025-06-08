@@ -1,5 +1,5 @@
-import type { AlertFeature } from 'types';
-import config from 'config';
+import type { AlertFeature } from 'modules/types';
+import config from 'modules/config';
 
 export interface WeatherService {
   NWS_API_BASE: string;

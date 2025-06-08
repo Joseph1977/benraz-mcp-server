@@ -1,5 +1,5 @@
-import type { SearchResult } from 'types';
-import config from 'config';
+import type { SearchResult } from 'modules/types';
+import config from 'modules/config';
 
 export interface BraveService {
   search(query: string, count?: number): Promise<SearchResult[]>;
