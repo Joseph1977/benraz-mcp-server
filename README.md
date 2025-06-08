@@ -70,6 +70,24 @@ The server will start and listen on the configured port (default is usually 3000
 
 Refer to the code or API documentation for specific endpoint details and request/response formats.
 
+## Running with Docker
+
+1. **Build the Docker image:**
+
+   ```sh
+   docker build -t myfirst_mcpserver .
+   ```
+2. **Run the container (make sure to provide your .env file):**
+
+   ```sh
+   docker run --name my_mcp_container --env-file ".env with secrets" -p 3000:3000 myfirst_mcpserver
+   ```
+
+   - Replace `3000` with your server's port if different.
+   - Ensure your `.env with secrets` file is in the project root.
+
+> **Note:** Never commit your `.env with secrets` file to version control.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
