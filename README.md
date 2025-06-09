@@ -4,8 +4,8 @@ This project is a Machine Control Platform (MCP) server designed to provide API 
 
 ## Features
 
-- Integrates with Brave Search API for web search functionality.
-- Integrates with the National Weather Service API for weather data.
+- Implements the Machine Control Platform (MCP) protocol using Server-Sent Events (SSE) for bi-directional communication.
+- Exposes tools for web search (Brave, Google) and weather information.
 - Modular and extensible architecture for adding more services.
 
 ## Prerequisites
@@ -31,11 +31,17 @@ This project is a Machine Control Platform (MCP) server designed to provide API 
    Create a `.env` file in the project root with the following content (replace with your actual API keys):
 
    ```
-   BRAVE_API_KEY=your_brave_api_key
+   BRAVE_API_KEY=YOUR_BRAVE_API_KEY_HERE
    BRAVE_BASE_URL=https://api.search.brave.com/res/v1
 
    WEATHER_USER_AGENT=WeatherApp/1.0
    WEATHER_API_BASE=https://api.weather.gov
+
+   GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY_HERE
+   GOOGLE_CSE_ID=YOUR_GOOGLE_CSE_ID_HERE
+
+   MCP_PORT=4000
+   MCP_HOST=0.0.0.0
    ```
 
    > **Note:** Do not commit your `.env` file or any file containing secrets to version control.
@@ -59,7 +65,18 @@ Start the server with:
 npm start
 ```
 
-The server will start and listen on the configured port (default is usually 3000 or as set in your environment).
+The server will start and listen on the port configured in your `.env` file (default is 4000).
+It provides an SSE endpoint at `/sse` for MCP communication and a `/tool_call` endpoint for clients to invoke tools.
+
+## MCP Implementation Rationale
+
+This server implements the MCP protocol directly using Express.js and Server-Sent Events (SSE) rather than relying solely on the `@modelcontextprotocol/sdk`. The primary reasons for this approach are:
+
+- **Persistent Dockerized Service:** The initial goal was to create a server that could run persistently within a Docker container. The `StdioServerTransport` provided by the Node.js version of the SDK is designed for standard input/output communication, which is not suitable for a long-running network service that needs to be accessible over HTTP.
+- **HTTP/SSE Transport Requirement:** For a web-accessible MCP server, an HTTP-based transport, specifically using SSE for bi-directional communication, is necessary. At the time of development, a readily available and straightforward HTTP/SSE transport was not apparent in the Node.js SDK version being used (`^1.12.1`).
+- **Control and Flexibility:** Implementing the protocol directly provides greater control over the transport layer, message handling, and integration with the Express.js framework. This allows for custom logic in managing client connections and SSE streams.
+
+While the `@modelcontextprotocol/sdk` is a valuable resource, the specific requirements for a persistent, Docker-friendly, HTTP/SSE-based server led to this custom implementation.
 
 ## Usage
 
@@ -73,20 +90,17 @@ Refer to the code or API documentation for specific endpoint details and request
 ## Running with Docker
 
 1. **Build the Docker image:**
-
    ```sh
-   docker build -t myfirst_mcpserver .
+   docker build -t my_mcp_server .
    ```
 2. **Run the container (make sure to provide your .env file):**
-
    ```sh
-   docker run --name my_mcp_container --env-file ".env with secrets" -p 3000:3000 myfirst_mcpserver
+   docker run --name my_mcp_container --env-file .env -p 4000:4000 my_mcp_server
    ```
+   - Replace `4000` with your server's port if different (ensure it matches `MCP_PORT` in your `.env`).
+   - Ensure your `.env` file (or `.env with secrets` if you named it that) is in the project root and accessible.
 
-   - Replace `3000` with your server's port if different.
-   - Ensure your `.env with secrets` file is in the project root.
-
-> **Note:** Never commit your `.env with secrets` file to version control.
+> **Note:** Never commit your `.env` file to version control.
 
 ## Contributing
 
