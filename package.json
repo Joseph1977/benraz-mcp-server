@@ -8,8 +8,9 @@
     "MyFirst_MCPserver": "./build/index.js"
   },
   "scripts": {
-    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --outdir=build --format=esm && node --eval \"import('fs').then(fs => fs.chmodSync('build/index.js', '755'))\" && copyfiles .env build",
-    "start": "node ./build/index.js"
+    "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --external:node:* --external:express --outdir=build --format=esm && node --eval \"import('fs').then(fs => fs.chmodSync('build/index.js', '755'))\" && copyfiles .env build",
+    "start": "node ./build/index.js",
+    "localbuild": "npm run build && copy \".env with secrets\" \"build\\.env\""
   },
   "files": [
     "build"
@@ -20,9 +21,11 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "zod": "^3.25.55"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/node": "^22.15.30",
     "copyfiles": "^2.4.1",
     "esbuild": "^0.25.5",
